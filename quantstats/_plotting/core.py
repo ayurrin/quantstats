@@ -20,10 +20,6 @@
 
 import matplotlib.pyplot as _plt
 
-try:
-    _plt.rcParams["font.family"] = "Arial"
-except Exception:
-    pass
 
 import matplotlib.dates as _mdates
 from matplotlib.ticker import (
@@ -79,8 +75,8 @@ _GRAYSCALE_COLORS = [
     "#666666",
     "#999999",
 ]
-
-
+from matplotlib import rcParams
+fontname = rcParams['font.family'][0]
 def _get_colors(grayscale):
     colors = _FLATUI_COLORS
     ls = "-"
@@ -106,7 +102,7 @@ def plot_returns_bars(
     log_scale=False,
     figsize=(10, 6),
     grayscale=False,
-    fontname="Arial",
+    fontname=fontname,
     ylabel=True,
     subtitle=True,
     savefig=None,
@@ -260,7 +256,7 @@ def plot_timeseries(
     figsize=(10, 6),
     ylabel="",
     grayscale=False,
-    fontname="Arial",
+    fontname=fontname,
     subtitle=True,
     savefig=None,
     show=True,
@@ -291,7 +287,7 @@ def plot_timeseries(
 
     if resample:
         returns = returns.resample(resample)
-        returns = returns.last() if compound is True else returns.sum(axis=0)
+        returns = returns.last() if compound is True else returns.sum()
         if isinstance(benchmark, _pd.Series):
             benchmark = benchmark.resample(resample)
             benchmark = benchmark.last() if compound is True else benchmark.sum(axis=0)
@@ -408,7 +404,7 @@ def plot_histogram(
     benchmark,
     resample="ME",
     bins=20,
-    fontname="Arial",
+    fontname=fontname,
     grayscale=False,
     title="Returns",
     kde=True,
@@ -611,7 +607,7 @@ def plot_rolling_stats(
     figsize=(10, 6),
     ylabel="",
     grayscale=False,
-    fontname="Arial",
+    fontname=fontname,
     subtitle=True,
     savefig=None,
     show=True,
@@ -738,7 +734,7 @@ def plot_rolling_beta(
     hlcolor="red",
     figsize=(10, 6),
     grayscale=False,
-    fontname="Arial",
+    fontname=fontname,
     lw=1.5,
     ylabel=True,
     subtitle=True,
@@ -878,7 +874,7 @@ def plot_longest_drawdowns(
     returns,
     periods=5,
     lw=1.5,
-    fontname="Arial",
+    fontname=fontname,
     grayscale=False,
     title=None,
     log_scale=False,
@@ -992,7 +988,7 @@ def plot_longest_drawdowns(
 def plot_distribution(
     returns,
     figsize=(10, 6),
-    fontname="Arial",
+    fontname=fontname,
     grayscale=False,
     ylabel=True,
     subtitle=True,
@@ -1013,16 +1009,16 @@ def plot_distribution(
     apply_fnc = _stats.comp if compounded else _np.sum
 
     port["Weekly"] = port["Daily"].resample("W-MON").apply(apply_fnc)
-    port["Weekly"].ffill(inplace=True)
+    port["Weekly"] = port["Weekly"].ffill()
 
     port["Monthly"] = port["Daily"].resample("ME").apply(apply_fnc)
-    port["Monthly"].ffill(inplace=True)
+    port["Monthly"] = port["Monthly"].ffill()
 
     port["Quarterly"] = port["Daily"].resample("QE").apply(apply_fnc)
-    port["Quarterly"].ffill(inplace=True)
+    port["Quarterly"] = port["Quarterly"].ffill()
 
     port["Yearly"] = port["Daily"].resample("YE").apply(apply_fnc)
-    port["Yearly"].ffill(inplace=True)
+    port["Yearly"] = port["Yearly"].ffill()
 
     fig, ax = _plt.subplots(figsize=figsize)
     ax.spines["top"].set_visible(False)

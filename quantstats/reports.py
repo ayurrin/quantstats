@@ -87,7 +87,7 @@ def html(
 
     strategy_title = kwargs.get("strategy_title", "Strategy")
     if isinstance(returns, _pd.DataFrame):
-        if len(returns.columns) > 1 and isinstance(strategy_title, str):
+        if len(returns.columns) >= 1 and isinstance(strategy_title, str):
             strategy_title = list(returns.columns)
 
     if benchmark is not None:
